@@ -20,10 +20,10 @@ const MeshBuilder = React.forwardRef((props, ref) => {
         meshMaterial.color.set(new THREE.Color(props.color));
     } else if (props.material && !props.color) {
         meshMaterial = props.material;
-        meshMaterial.color.copy(defaultColor); // Set to white
+        meshMaterial.color.copy(defaultColor);
     } else if (!props.material && !props.color) {
         meshMaterial = props.mesh.material;
-        meshMaterial.color.copy(defaultColor); // Set to white
+        meshMaterial.color.copy(defaultColor);
     }
 
     const logos = globalState.logoArr.filter((e) => e.name == props.mesh.name);
@@ -105,6 +105,28 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     0.019984598936568083,
                     0.07997076888782557,
                     10.091629068553448,
+                );
+                break;
+            case 'Jar':
+                defaultPos = [
+                    0.01734962116276329, 0.05332992313939302,
+                    0.08324896520546525,
+                ];
+                defaultNormal = new THREE.Vector3(
+                    -0.8273229034761411,
+                    -0.03662904975732841,
+                    10.03935150661017,
+                );
+                break;
+            case 'Lid_Side':
+                defaultPos = [
+                    0.05421435158634437, 0.06719581148090548,
+                    0.050523138631589554,
+                ];
+                defaultNormal = new THREE.Vector3(
+                    9.827752464226725,
+                    2.183312394828226,
+                    0.04852313863158955,
                 );
                 break;
             default:

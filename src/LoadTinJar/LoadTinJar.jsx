@@ -7,7 +7,7 @@ const LoadTinJar = (props) => {
     const { scene, nodes } = useGLTF('/assets/glbFiles/4OzTinJarV2.0.0.glb');
     const objectRef = useRef();
     const tinRef = useRef();
-
+    const sideRef = useRef();
     useEffect(() => {
         let logoMeshes = scene.children.filter(
             (child) => child.userData.isLogoMesh,
@@ -17,12 +17,19 @@ const LoadTinJar = (props) => {
     }, []);
 
     useEffect(() => {
-        // Store the actual mesh object itself, not the ref
-        if (tinRef.current) {
-            globalStateData.currentMeshObject = tinRef.current;
-            props.cameraControls.current.fitToBox(objectRef.current, true);
+        switch (globalStateData.selectedLogoMesh) {
+            case 'Jar':
+                globalStateData.currentMeshObject = tinRef.current;
+                break;
+            case 'Lid_Side':
+                globalStateData.currentMeshObject = sideRef.current;
+                break;
+            default:
+                globalStateData.currentMeshObject = tinRef.current;
+                break;
         }
-    }, [tinRef.current]); // Dependency on the current value
+        props.cameraControls.current.fitToBox(objectRef.current, true);
+    }, [globalStateData.selectedLogoMesh]);
 
     return (
         <group ref={objectRef} position={[0.02, 0.03, 0.05]}>
@@ -35,8 +42,12 @@ const LoadTinJar = (props) => {
             {/* <MeshBuilder mesh={nodes.Ribbonend} />
             <MeshBuilder mesh={nodes.Ribbonknot} /> 
             <MeshBuilder mesh={nodes.Ribbontop} /> */}
-            {/* <MeshBuilder mesh={nodes.Lid} move={props.move} /> */}
-            <MeshBuilder mesh={nodes.Dust_Lid} />
+            <MeshBuilder mesh={nodes.Lid2} move={props.move} />
+            <MeshBuilder
+                mesh={nodes.Lid_Side}
+                ref={sideRef}
+                move={props.move}
+            />
         </group>
     );
 };

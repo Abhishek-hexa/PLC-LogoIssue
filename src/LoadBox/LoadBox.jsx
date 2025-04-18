@@ -40,6 +40,7 @@ const LoadBox = (props) => {
             default:
                 globalStateData.currentMeshObject = null;
         }
+        props.cameraControls.current.fitToBox(objectRef.current, true);
     }, [globalStateData.selectedLogoMesh]);
 
     return (
