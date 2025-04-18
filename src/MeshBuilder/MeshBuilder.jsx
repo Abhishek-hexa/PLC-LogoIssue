@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { Decal } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
 import globalStateData from '../globalState/globalState';
-import { MathUtils } from 'three/src/math/MathUtils.js';
 import React from 'react';
 
 const MeshBuilder = React.forwardRef((props, ref) => {
@@ -23,15 +22,19 @@ const MeshBuilder = React.forwardRef((props, ref) => {
     }
     const logos = globalState.logoArr.filter((e) => e.name == props.mesh.name);
 
-    const defaultPos = [0.02, 0.03, 0.05];
-    const defaultRot = props.mesh.userData.rotation
-        ? props.mesh.userData.rotation
-              .split(',')
-              .map((e) => MathUtils.degToRad(parseFloat(e)))
-        : [0, 0, 0];
+    let defaultPos = [
+        0.0442476835846901, 0.05171097137033939, 0.06989955827593804,
+    ];
+    let defaultRot = [
+        -0.028024421525668045, 0.5888754552421681, 0.015568317377550699,
+    ];
     const defaultSize = props.mesh.userData.size
         ? props.mesh.userData.size.split(',').map((e) => parseFloat(e))
         : [0.05, 0.05, 0.05];
+
+    let defaultNormal = [
+        5.598510083258152, 0.2847219749540091, 8.382292389124633,
+    ];
 
     const meshLogos = logos.filter((e) => e.name == props?.mesh.name);
     let isUpdate = false;
@@ -46,6 +49,7 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                 e.position = defaultPos;
                 e.rotation = defaultRot;
                 e.size = defaultSize;
+                e.manipulatorNormal = defaultNormal;
             }
             return e;
         });

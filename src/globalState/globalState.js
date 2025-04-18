@@ -11,7 +11,7 @@ const globalStateData = proxy({
         size: [0.01, 0.01],
         rotation: [0, 0, 0],
         angleDiff: 0,
-        meraNormal: null,
+        manipulatorNormal: null,
     },
     mouseData: {
         isDown: false,

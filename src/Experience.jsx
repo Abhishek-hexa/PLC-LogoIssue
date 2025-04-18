@@ -58,7 +58,7 @@ export default function Experience() {
                         dummyObject.position.z + 0.002,
                     ],
                     rotation: blendedRotation,
-                    meraNormal: normal.clone(),
+                    manipulatorNormal: normal.clone(),
                 };
                 break;
             default:
