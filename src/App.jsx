@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import * as THREE from 'three';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'valtio';
+import './App.css';
 
 export default function App() {
     const snap = useSnapshot(globalStateData);
@@ -21,7 +22,6 @@ export default function App() {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            // cache the image blob
             let blob = new Blob([e.target.result], { type: file.type });
             let url = URL.createObjectURL(blob);
 
@@ -35,36 +35,47 @@ export default function App() {
         };
         reader.readAsArrayBuffer(file);
     };
+
     return (
-        <>
-            <div
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    zIndex: 1,
-                    background: 'white',
-                }}>
-                <input type="file" onChange={uploadImage} />
-                {snap.logoMeshes.map((e, index) => {
-                    return (
-                        <div key={index}>
-                            <input
-                                type="radio"
-                                name="logo"
-                                value={e}
-                                defaultChecked={index === 0}
-                                onChange={(e) => {
-                                    globalStateData.selectedLogoMesh =
-                                        e.target.value;
-                                    globalStateData.selectedLogoId = null;
-                                }}
-                            />
-                            <label>{e}</label>
-                        </div>
-                    );
-                })}
+        <div className="app-container">
+            <div className="control-panel">
+                <div className="upload-section">
+                    <label className="upload-button">
+                        Upload Logo
+                        <input
+                            type="file"
+                            onChange={uploadImage}
+                            accept="image/*"
+                            className="file-input"
+                        />
+                    </label>
+                </div>
+
+                <div className="logo-selection">
+                    <h3>Select Logo Type</h3>
+                    <div className="radio-group">
+                        {snap.logoMeshes.map((e, index) => (
+                            <label key={index} className="radio-label">
+                                <input
+                                    type="radio"
+                                    name="logo"
+                                    value={e}
+                                    defaultChecked={index === 0}
+                                    onChange={(e) => {
+                                        globalStateData.selectedLogoMesh =
+                                            e.target.value;
+                                        globalStateData.selectedLogoId = null;
+                                    }}
+                                    className="radio-input"
+                                />
+                                <span className="radio-custom"></span>
+                                {e}
+                            </label>
+                        ))}
+                    </div>
+                </div>
             </div>
+
             <Canvas
                 shadows
                 camera={{
@@ -75,6 +86,6 @@ export default function App() {
                 }}>
                 <Experience />
             </Canvas>
-        </>
+        </div>
     );
 }
