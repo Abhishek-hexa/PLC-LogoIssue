@@ -65,7 +65,14 @@ export default function App() {
                     );
                 })}
             </div>
-            <Canvas shadows camera={{ fov: 20, position: [0, 0, 0.5] }}>
+            <Canvas
+                shadows
+                camera={{
+                    fov: 20,
+                    position: [0, 0, 0.5],
+                    near: 0.01,
+                    far: 100,
+                }}>
                 <Experience />
             </Canvas>
         </>

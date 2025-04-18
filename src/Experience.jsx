@@ -70,7 +70,7 @@ export default function Experience() {
         <>
             <LoadCameraControls ref={loadCameraControlsRef} />
             <LoadEnvironment />
-            <LoadTinJar move={move} />
+            <LoadTinJar cameraControls={loadCameraControlsRef} move={move} />
             <Manipulator />
         </>
     );

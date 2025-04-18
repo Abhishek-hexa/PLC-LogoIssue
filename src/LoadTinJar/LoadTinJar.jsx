@@ -20,13 +20,14 @@ const LoadTinJar = (props) => {
         // Store the actual mesh object itself, not the ref
         if (tinRef.current) {
             globalStateData.currentMeshObject = tinRef.current;
+            props.cameraControls.current.fitToBox(objectRef.current, true);
         }
     }, [tinRef.current]); // Dependency on the current value
 
     return (
         <group ref={objectRef} position={[0.02, 0.03, 0.05]}>
-            <MeshBuilder mesh={nodes.Jar} move={props.move} />
-            <MeshBuilder mesh={nodes.Tin} move={props.move} ref={tinRef} />
+            <MeshBuilder mesh={nodes.Jar} move={props.move} ref={tinRef} />
+            <MeshBuilder mesh={nodes.Tin} move={props.move} />
             <MeshBuilder mesh={nodes.Wax} />
             <MeshBuilder mesh={nodes.Wick} />
             {/* <MeshBuilder mesh={nodes.woodwick} /> */}
