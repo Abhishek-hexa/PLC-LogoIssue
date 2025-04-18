@@ -5,7 +5,6 @@ import LoadEnvironment from './LoadEnvironment/LoadEnvironment';
 import LoadTinJar from './LoadTinJar/LoadTinJar';
 import Manipulator from './Manipulator/Manipulator';
 import * as THREE from 'three';
-import { useState } from 'react';
 import { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import globalStateData from './globalState/globalState';
@@ -53,73 +52,19 @@ export default function Experience() {
 
                 globalStateData.manipulatorData = {
                     ...manipulatorData,
-                    position: [point.x, point.y, point.z + 0.002],
+                    position: [
+                        dummyObject.position.x,
+                        dummyObject.position.y,
+                        dummyObject.position.z + 0.002,
+                    ],
                     rotation: blendedRotation,
+                    meraNormal: normal.clone(),
                 };
                 break;
             default:
                 break;
         }
     };
-    // const move = (e) => {
-    //     e.stopPropagation();
-
-    //     if (!mouseData?.isDown) return;
-
-    //     const point = e.point;
-    //     if (!point) return;
-
-    //     loadCameraControlsRef.current.enabled = false;
-
-    //     switch (mouseData.type) {
-    //         case 'move': {
-    //             // Get current manipulator data
-    //             const currentRotation = [...manipulatorData.rotation];
-    //             const fixedDirection = e.normal;
-    //             const currentZ = fixedDirection.z;
-
-    //             // Check if the normal's Z direction has flipped
-    //             const previousZ = manipulatorData.previousNormalZ;
-    //             if (
-    //                 previousZ !== undefined &&
-    //                 Math.sign(currentZ) !== Math.sign(previousZ)
-    //             ) {
-    //                 // Adjust Z rotation by 180 degrees (π radians) to compensate
-    //                 currentRotation[2] += Math.PI;
-    //                 // Normalize the angle to stay within [0, 2π)
-    //                 currentRotation[2] =
-    //                     ((currentRotation[2] % (2 * Math.PI)) + 2 * Math.PI) %
-    //                     (2 * Math.PI);
-    //             }
-
-    //             // Compute new rotation based on the normal
-    //             const n = point.clone().add(fixedDirection);
-    //             dummyObject.position.copy(point);
-    //             dummyObject.lookAt(n);
-    //             const normalEuler = new THREE.Euler().setFromQuaternion(
-    //                 dummyObject.quaternion,
-    //             );
-
-    //             // Blend rotations: new X/Y from normal, adjusted Z from current
-    //             const blendedRotation = [
-    //                 normalEuler.x,
-    //                 normalEuler.y,
-    //                 currentRotation[2],
-    //             ];
-    //             console.log(globalStateData.manipulatorData.rotation);
-    //             // Update global state with new data and store current normal Z
-    //             globalStateData.manipulatorData = {
-    //                 ...manipulatorData,
-    //                 previousNormalZ: currentZ,
-    //                 position: [point.x, point.y, point.z + 0.002],
-    //                 rotation: blendedRotation,
-    //             };
-    //             break;
-    //         }
-    //         default:
-    //             break;
-    //     }
-    // };
 
     return (
         <>

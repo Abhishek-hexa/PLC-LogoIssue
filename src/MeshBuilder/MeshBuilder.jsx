@@ -1,10 +1,12 @@
+/* eslint-disable react/display-name */
 import * as THREE from 'three';
 import { Decal } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
 import globalStateData from '../globalState/globalState';
 import { MathUtils } from 'three/src/math/MathUtils.js';
+import React from 'react';
 
-const MeshBuilder = (props) => {
+const MeshBuilder = React.forwardRef((props, ref) => {
     let globalState = useSnapshot(globalStateData);
     const { mouseData } = globalState;
     let meshMaterial;
@@ -59,6 +61,7 @@ const MeshBuilder = (props) => {
     return (
         <>
             <mesh
+                ref={ref}
                 onPointerMove={
                     mouseData?.type == 'move'
                         ? (e) => {
@@ -93,6 +96,6 @@ const MeshBuilder = (props) => {
             </mesh>
         </>
     );
-};
+});
 
 export default MeshBuilder;
