@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import globalStateData from './globalState/globalState';
+import LoadBox from './LoadBox/LoadBox';
 
 export default function Experience() {
     const dummyObject = new THREE.Object3D();
@@ -70,7 +71,8 @@ export default function Experience() {
         <>
             <LoadCameraControls ref={loadCameraControlsRef} />
             <LoadEnvironment />
-            <LoadTinJar cameraControls={loadCameraControlsRef} move={move} />
+            {/* <LoadTinJar cameraControls={loadCameraControlsRef} move={move} /> */}
+            <LoadBox cameraControls={loadCameraControlsRef} move={move} />
             <Manipulator />
         </>
     );
