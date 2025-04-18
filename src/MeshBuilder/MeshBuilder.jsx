@@ -21,7 +21,6 @@ const MeshBuilder = React.forwardRef((props, ref) => {
         meshMaterial = props.mesh.material;
     }
     const logos = globalState.logoArr.filter((e) => e.name == props.mesh.name);
-
     let defaultPos = [
         0.0442476835846901, 0.05171097137033939, 0.06989955827593804,
     ];

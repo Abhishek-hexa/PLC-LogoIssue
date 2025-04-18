@@ -1,13 +1,12 @@
 import * as THREE from 'three';
 import { Line } from '@react-three/drei';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import EndPoint from './EndPoint';
 import { useRef } from 'react';
 import { useSnapshot } from 'valtio';
 import globalStateData from '../globalState/globalState';
 import { useThree } from '@react-three/fiber';
 import { extend } from '@react-three/fiber';
-import { Utils3d } from '../utils/Utils3d';
 extend({ ArrowHelper: THREE.ArrowHelper });
 
 export default function Manipulator() {
@@ -56,6 +55,7 @@ export default function Manipulator() {
                     position: position,
                     size: size,
                     rotation: rotation,
+                    manipulatorNormal: manipulatorData.manipulatorNormal,
                 };
             } else {
                 return e;
