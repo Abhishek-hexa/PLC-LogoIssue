@@ -32,9 +32,11 @@ const MeshBuilder = React.forwardRef((props, ref) => {
         ? props.mesh.userData.size.split(',').map((e) => parseFloat(e))
         : [0.05, 0.05, 0.05];
 
-    let defaultNormal = [
-        5.598510083258152, 0.2847219749540091, 8.382292389124633,
-    ];
+    let defaultNormal = new THREE.Vector3(
+        5.598510083258152,
+        0.2847219749540091,
+        8.382292389124633,
+    );
 
     const meshLogos = logos.filter((e) => e.name == props?.mesh.name);
     let isUpdate = false;

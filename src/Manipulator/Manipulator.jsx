@@ -28,31 +28,7 @@ export default function Manipulator() {
         let logoData = globalState.logoArr.find((e) => e.id === selectedLogoId);
         if (!logoData) return;
 
-        // const jar = scene.getObjectByName(logoData.name);
-        // if (!jar) return;
-
-        // const { center } = Utils3d.getCenterPointAndNormal(jar);
-        // const closestPointNormal = Utils3d.calculateClosestPointNormal(
-        //     jar,
-        //     center,
-        // );
-        // const jarObject3D = new THREE.Object3D();
-        // const n = new THREE.Vector3(
-        //     closestPointNormal.x,
-        //     closestPointNormal.y,
-        //     closestPointNormal.z,
-        // );
-        // n.multiplyScalar(10);
-        // n.add(center);
-        // jarObject3D.position.copy(center);
-        // jarObject3D.lookAt(n);
-
-        // Get the stored angleDiff for this logo, or use 0 if none exists
         const storedAngleDiff = globalState.logoRotations[selectedLogoId] || 0;
-
-        // console.log(jarObject3D.rotation);
-        // console.log(jarObject3D.position);
-        // console.log(n);
 
         globalStateData.manipulatorData = {
             position: logoData.position,
