@@ -37,12 +37,16 @@ export default function Experience() {
                 let angleDiff = globalStateData.manipulatorData.angleDiff;
                 let normal = e.normal;
                 const n = normal.clone();
+
+                let angleToRotate = angleDiff;
+                if (Math.abs(normal.clone().y) > 0.9) {
+                    n.z = Math.abs(n.z);
+                }
                 n.multiplyScalar(10);
                 n.add(e.point);
-
                 dummyObject.position.copy(e.point);
                 dummyObject.lookAt(n);
-                angleDiff ? dummyObject.rotateZ(angleDiff) : null;
+                angleToRotate ? dummyObject.rotateZ(angleToRotate) : null;
                 const normalRotation = dummyObject.rotation;
 
                 const blendedRotation = [
