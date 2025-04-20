@@ -105,38 +105,40 @@ export class Utils3d {
         };
     };
 
-    static calculateRotation = (normal, dir) => {
-        const axis = {
-            x: Math.abs(normal.x) > 0.9,
-            y: Math.abs(normal.y) > 0.8,
-            z: Math.abs(normal.z) > 0.9,
+    static calculateRotation = (planeNormal, mouseDirection) => {
+        const dominantAxis = {
+            isXAxis: Math.abs(planeNormal.x) > 0.9,
+            isYAxis: Math.abs(planeNormal.y) > 0.8,
+            isZAxis: Math.abs(planeNormal.z) > 0.9,
         };
 
-        let currentAngle, sign, angleDiff;
+        let rotationAngle, directionSign, finalRotation;
 
-        if (axis.x) {
-            currentAngle = Math.atan2(dir.y, dir.z);
-            sign = Math.sign(normal.x);
-            currentAngle *= -sign;
-            angleDiff = currentAngle;
-            angleDiff = normal.x < 0 ? angleDiff : angleDiff + Math.PI;
-        } else if (axis.z) {
-            currentAngle = Math.atan2(dir.y, dir.x);
-            sign = Math.sign(normal.z);
-            currentAngle *= sign;
-            angleDiff = currentAngle;
-            angleDiff = normal.z < 0 ? angleDiff + Math.PI : angleDiff;
-        } else if (axis.y) {
-            currentAngle = Math.atan2(dir.x, dir.z);
-            sign = Math.sign(normal.y);
-            currentAngle *= sign;
-            if (normal.z > 0) {
-                angleDiff = currentAngle - Math.PI / 2;
+        if (dominantAxis.isXAxis) {
+            rotationAngle = Math.atan2(mouseDirection.y, mouseDirection.z);
+            directionSign = Math.sign(planeNormal.x);
+            rotationAngle *= -directionSign;
+            finalRotation = rotationAngle;
+            finalRotation =
+                planeNormal.x < 0 ? finalRotation : finalRotation + Math.PI;
+        } else if (dominantAxis.isZAxis) {
+            rotationAngle = Math.atan2(mouseDirection.y, mouseDirection.x);
+            directionSign = Math.sign(planeNormal.z);
+            rotationAngle *= directionSign;
+            finalRotation = rotationAngle;
+            finalRotation =
+                planeNormal.z < 0 ? finalRotation + Math.PI : finalRotation;
+        } else if (dominantAxis.isYAxis) {
+            rotationAngle = Math.atan2(mouseDirection.x, mouseDirection.z);
+            directionSign = Math.sign(planeNormal.y);
+            rotationAngle *= directionSign;
+            if (planeNormal.z > 0) {
+                finalRotation = rotationAngle - Math.PI / 2;
             } else {
-                angleDiff = currentAngle + Math.PI / 2;
+                finalRotation = rotationAngle + Math.PI / 2;
             }
         }
 
-        return angleDiff;
+        return finalRotation;
     };
 }
