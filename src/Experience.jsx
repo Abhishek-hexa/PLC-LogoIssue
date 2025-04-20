@@ -37,7 +37,6 @@ export default function Experience() {
                 let angleDiff = globalStateData.manipulatorData.angleDiff;
                 let normal = e.normal;
                 const n = normal.clone();
-                console.log(n.clone().normalize());
                 n.multiplyScalar(10);
                 n.add(e.point);
 
