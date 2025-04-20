@@ -6,8 +6,7 @@ import { useRef } from 'react';
 import { useSnapshot } from 'valtio';
 import globalStateData from '../globalState/globalState';
 import { useThree } from '@react-three/fiber';
-import { extend } from '@react-three/fiber';
-extend({ ArrowHelper: THREE.ArrowHelper });
+import { Utils3d } from '../utils/Utils3d';
 
 export default function Manipulator() {
     const globalState = useSnapshot(globalStateData);
@@ -113,73 +112,23 @@ export default function Manipulator() {
                 .clone();
             const mousePos = point.clone();
             const dir = new THREE.Vector3()
-                .subVectors(mousePos.clone(), manipulatorPos.clone())
+                .subVectors(mousePos, manipulatorPos)
                 .normalize();
-            let currentAngle;
-            let sign;
-            let angleDiff;
 
-            if (
-                Math.abs(globalState.manipulatorData.manipulatorNormal.x) > 0.9
-            ) {
-                currentAngle = Math.atan2(dir.y, dir.z);
-                sign = Math.sign(
-                    globalState.manipulatorData.manipulatorNormal.clone().x,
-                );
-
-                currentAngle *= -sign;
-
-                angleDiff = currentAngle;
-                angleDiff =
-                    globalState.manipulatorData.manipulatorNormal.clone().x < 0
-                        ? angleDiff
-                        : angleDiff + Math.PI;
-            } else if (
-                Math.abs(globalState.manipulatorData.manipulatorNormal.z) > 0.9
-            ) {
-                currentAngle = Math.atan2(dir.y, dir.x);
-                sign = Math.sign(
-                    globalState.manipulatorData.manipulatorNormal.clone().z,
-                );
-
-                currentAngle *= sign;
-                angleDiff = currentAngle;
-                angleDiff =
-                    globalState.manipulatorData.manipulatorNormal.clone().z < 0
-                        ? angleDiff + Math.PI
-                        : angleDiff;
-            } else if (
-                Math.abs(globalState.manipulatorData.manipulatorNormal.y) > 0.8
-            ) {
-                currentAngle = Math.atan2(dir.x, dir.z);
-                sign = Math.sign(
-                    globalState.manipulatorData.manipulatorNormal.clone().y,
-                );
-
-                currentAngle *= sign;
-                if (
-                    globalState.manipulatorData.manipulatorNormal.clone().z > 0
-                ) {
-                    angleDiff = currentAngle - Math.PI / 2;
-                } else {
-                    angleDiff = currentAngle + Math.PI / 2;
-                }
-
-                if (
-                    globalState.manipulatorData.manipulatorNormal.clone().y < 0
-                ) {
-                    angleDiff = -angleDiff;
-                }
-            }
-            const n = globalState.manipulatorData.manipulatorNormal
+            const normal = globalState.manipulatorData.manipulatorNormal
                 ? globalState.manipulatorData.manipulatorNormal.clone()
                 : normal.clone();
-            n.multiplyScalar(10);
-            n.add(e.point.clone());
+
+            const angleDiff = Utils3d.calculateRotation(normal, dir);
+
+            normal.multiplyScalar(10);
+            normal.add(e.point.clone());
 
             dummyObject.position.copy(e.point);
-            dummyObject.lookAt(n);
-            angleDiff ? dummyObject.rotateZ(angleDiff) : null;
+            dummyObject.lookAt(normal);
+            if (angleDiff !== undefined) {
+                dummyObject.rotateZ(angleDiff);
+            }
             const normalRotation = dummyObject.rotation;
 
             const blendedRotation = [

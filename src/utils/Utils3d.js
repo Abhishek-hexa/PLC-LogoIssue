@@ -104,4 +104,39 @@ export class Utils3d {
             uv,
         };
     };
+
+    static calculateRotation = (normal, dir) => {
+        const axis = {
+            x: Math.abs(normal.x) > 0.9,
+            y: Math.abs(normal.y) > 0.8,
+            z: Math.abs(normal.z) > 0.9,
+        };
+
+        let currentAngle, sign, angleDiff;
+
+        if (axis.x) {
+            currentAngle = Math.atan2(dir.y, dir.z);
+            sign = Math.sign(normal.x);
+            currentAngle *= -sign;
+            angleDiff = currentAngle;
+            angleDiff = normal.x < 0 ? angleDiff : angleDiff + Math.PI;
+        } else if (axis.z) {
+            currentAngle = Math.atan2(dir.y, dir.x);
+            sign = Math.sign(normal.z);
+            currentAngle *= sign;
+            angleDiff = currentAngle;
+            angleDiff = normal.z < 0 ? angleDiff + Math.PI : angleDiff;
+        } else if (axis.y) {
+            currentAngle = Math.atan2(dir.x, dir.z);
+            sign = Math.sign(normal.y);
+            currentAngle *= sign;
+            if (normal.z > 0) {
+                angleDiff = currentAngle - Math.PI / 2;
+            } else {
+                angleDiff = currentAngle + Math.PI / 2;
+            }
+        }
+
+        return angleDiff;
+    };
 }
