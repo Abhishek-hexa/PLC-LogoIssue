@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import globalStateData from './globalState/globalState';
 import LoadBox from './LoadBox/LoadBox';
-
+import { AxesHelper } from 'three';
 export default function Experience() {
     const dummyObject = new THREE.Object3D();
     const globalState = useSnapshot(globalStateData);
@@ -34,9 +34,10 @@ export default function Experience() {
 
         switch (mouseData.type) {
             case 'move':
-                const angleDiff = globalStateData.manipulatorData.angleDiff;
+                let angleDiff = globalStateData.manipulatorData.angleDiff;
                 let normal = e.normal;
                 const n = normal.clone();
+                console.log(n.clone().normalize());
                 n.multiplyScalar(10);
                 n.add(e.point);
 
@@ -71,8 +72,9 @@ export default function Experience() {
         <>
             <LoadCameraControls ref={loadCameraControlsRef} />
             <LoadEnvironment />
-            <LoadTinJar cameraControls={loadCameraControlsRef} move={move} />
-            {/* <LoadBox cameraControls={loadCameraControlsRef} move={move} /> */}
+            {/* <LoadTinJar cameraControls={loadCameraControlsRef} move={move} /> */}
+            <LoadBox cameraControls={loadCameraControlsRef} move={move} />
+            <axesHelper />
             <Manipulator />
         </>
     );

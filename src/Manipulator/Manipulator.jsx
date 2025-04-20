@@ -111,28 +111,71 @@ export default function Manipulator() {
             const manipulatorPos = new THREE.Vector3()
                 .fromArray(position)
                 .clone();
-            const mousePos = point;
+            const mousePos = point.clone();
             const dir = new THREE.Vector3()
                 .subVectors(mousePos.clone(), manipulatorPos.clone())
                 .normalize();
-            let currentAngle = Math.atan2(dir.y, dir.x);
+            let currentAngle;
+            let sign;
+            let angleDiff;
 
-            const sign = Math.sign(
-                globalState.manipulatorData.manipulatorNormal.clone().z,
-            );
-            currentAngle *= sign;
+            if (
+                Math.abs(globalState.manipulatorData.manipulatorNormal.x) > 0.9
+            ) {
+                currentAngle = Math.atan2(dir.y, dir.z);
+                sign = Math.sign(
+                    globalState.manipulatorData.manipulatorNormal.clone().x,
+                );
 
+                currentAngle *= -sign;
+
+                angleDiff = currentAngle;
+                angleDiff =
+                    globalState.manipulatorData.manipulatorNormal.clone().x < 0
+                        ? angleDiff
+                        : angleDiff + Math.PI;
+            } else if (
+                Math.abs(globalState.manipulatorData.manipulatorNormal.z) > 0.9
+            ) {
+                currentAngle = Math.atan2(dir.y, dir.x);
+                sign = Math.sign(
+                    globalState.manipulatorData.manipulatorNormal.clone().z,
+                );
+
+                currentAngle *= sign;
+                angleDiff = currentAngle;
+                angleDiff =
+                    globalState.manipulatorData.manipulatorNormal.clone().z < 0
+                        ? angleDiff + Math.PI
+                        : angleDiff;
+            } else if (
+                Math.abs(globalState.manipulatorData.manipulatorNormal.y) > 0.8
+            ) {
+                currentAngle = Math.atan2(dir.x, dir.z);
+                sign = Math.sign(
+                    globalState.manipulatorData.manipulatorNormal.clone().y,
+                );
+
+                currentAngle *= sign;
+                if (
+                    globalState.manipulatorData.manipulatorNormal.clone().z > 0
+                ) {
+                    angleDiff = currentAngle - Math.PI / 2;
+                } else {
+                    angleDiff = currentAngle + Math.PI / 2;
+                }
+
+                if (
+                    globalState.manipulatorData.manipulatorNormal.clone().y < 0
+                ) {
+                    angleDiff = -angleDiff;
+                }
+            }
             const n = globalState.manipulatorData.manipulatorNormal
                 ? globalState.manipulatorData.manipulatorNormal.clone()
                 : normal.clone();
             n.multiplyScalar(10);
             n.add(e.point.clone());
-            let angleDiff = currentAngle;
-
-            angleDiff =
-                globalState.manipulatorData.manipulatorNormal.clone().z < 0
-                    ? angleDiff + Math.PI
-                    : angleDiff;
 
             dummyObject.position.copy(e.point);
             dummyObject.lookAt(n);
