@@ -1,12 +1,16 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable react/display-name */
 import * as THREE from 'three';
 import { Decal } from '@react-three/drei';
 import { useSnapshot } from 'valtio';
 import globalStateData from '../globalState/globalState';
 import React from 'react';
+import { Utils3d } from '../utils/Utils3d';
+import { useThree } from '@react-three/fiber';
 
 const MeshBuilder = React.forwardRef((props, ref) => {
     let globalState = useSnapshot(globalStateData);
+    const { raycaster } = useThree();
     const { mouseData } = globalState;
     let meshMaterial;
 
@@ -57,11 +61,23 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     0.007383805451391482, 0.11826410847025945,
                     0.06023130616090583,
                 ];
-                defaultNormal = new THREE.Vector3(
-                    0.002317513651015523,
-                    10.104889200312131,
-                    0.547928180116126,
+                const position = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
                 );
+                const closetPointNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    position,
+                );
+                const rayDirection = closetPointNormal.clone().negate();
+
+                raycaster.set(position, rayDirection);
+
+                const intersects = raycaster.intersectObject(
+                    globalStateData.currentMeshObject,
+                );
+                defaultNormal = closetPointNormal;
                 break;
             case 'leftoutside':
                 defaultPos = [
