@@ -141,4 +141,17 @@ export class Utils3d {
 
         return finalRotation;
     };
+
+    static upLiftAPointIntheDirectionOfNormal(point, normal, scalar = 0.05) {
+        const dummyObject = new THREE.Object3D();
+        dummyObject.position.copy(point);
+        const normalForDummy = normal.clone().normalize();
+        dummyObject.lookAt(normalForDummy);
+        const euler = new THREE.Euler();
+        euler.setFromQuaternion(dummyObject.quaternion);
+        const newPoint = point
+            .clone()
+            .add(normalForDummy.clone().multiplyScalar(scalar));
+        return newPoint;
+    }
 }

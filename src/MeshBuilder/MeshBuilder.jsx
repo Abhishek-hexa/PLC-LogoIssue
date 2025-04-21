@@ -10,7 +10,7 @@ import { useThree } from '@react-three/fiber';
 
 const MeshBuilder = React.forwardRef((props, ref) => {
     let globalState = useSnapshot(globalStateData);
-    const { raycaster } = useThree();
+    const { scene } = useThree();
     const { mouseData } = globalState;
     let meshMaterial;
 
@@ -71,13 +71,21 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     position,
                 );
                 const rayDirection = closetPointNormal.clone().negate();
+                const raycaster = new THREE.Raycaster();
+                const upLiftedPoint =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        position.clone(),
+                        closetPointNormal.clone(),
+                        0.005,
+                    );
 
-                raycaster.set(position, rayDirection);
+                raycaster.set(upLiftedPoint, rayDirection);
 
-                const intersects = raycaster.intersectObject(
-                    globalStateData.currentMeshObject,
-                );
-                defaultNormal = closetPointNormal;
+                const intersects = raycaster.intersectObject(ref.current, true);
+                if (intersects.length > 0) {
+                    defaultNormal = intersects[0].normal;
+                    position.copy(intersects[0].point);
+                }
                 break;
             case 'leftoutside':
                 defaultPos = [
@@ -150,8 +158,29 @@ const MeshBuilder = React.forwardRef((props, ref) => {
         }
         globalStateData.logoArr = globalStateData.logoArr.map((e) => {
             if (e.name == props.mesh.name && !e.position) {
-                e.position = defaultPos;
-                e.rotation = defaultRot;
+                const dummyObject = new THREE.Object3D();
+                const p = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
+                );
+                dummyObject.position.copy(p);
+                const n = defaultNormal.clone();
+                n.multiplyScalar(10);
+                n.add(p);
+                dummyObject.lookAt(n);
+                dummyObject.rotateZ(defaultRot[2]);
+
+                e.position = [
+                    dummyObject.position.x,
+                    dummyObject.position.y,
+                    dummyObject.position.z,
+                ];
+                e.rotation = [
+                    dummyObject.rotation.x,
+                    dummyObject.rotation.y,
+                    dummyObject.rotation.z,
+                ];
                 e.size = defaultSize;
                 e.manipulatorNormal = defaultNormal;
             }
