@@ -153,6 +153,80 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     0.04852313863158955,
                 );
                 break;
+            case 'GlassFront':
+                defaultPos = [
+                    -0.005356870461734404, 0.08484233975891825,
+                    0.08314672843369543,
+                ];
+                const glassFrontPosition = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
+                );
+                const glassFrontNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    glassFrontPosition,
+                );
+
+                const glassFrontRayDirection = glassFrontNormal
+                    .clone()
+                    .negate();
+                const glassFrontLiftedPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        glassFrontPosition.clone(),
+                        glassFrontNormal.clone(),
+                        0.005,
+                    );
+                const glassFrontRaycaster = new THREE.Raycaster();
+
+                glassFrontRaycaster.set(
+                    glassFrontLiftedPosition,
+                    glassFrontRayDirection,
+                );
+
+                const glassFrontIntersections =
+                    glassFrontRaycaster.intersectObject(ref.current, true);
+                if (glassFrontIntersections.length > 0) {
+                    defaultNormal = glassFrontIntersections[0].normal;
+                    glassFrontPosition.copy(glassFrontIntersections[0].point);
+                }
+                break;
+            case 'GlassBack':
+                defaultPos = [
+                    0.03705962431734593, 0.07398426791552337,
+                    0.016707997116143417,
+                ];
+                const glassBackPosition = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
+                );
+                const glassBackNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    glassBackPosition,
+                );
+                const glassBackRayDirection = glassBackNormal.clone().negate();
+                const glassBackLiftedPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        glassBackPosition.clone(),
+                        glassBackNormal.clone(),
+                        0.005,
+                    );
+                const glassBackRaycaster = new THREE.Raycaster();
+
+                glassBackRaycaster.set(
+                    glassBackLiftedPosition,
+                    glassBackRayDirection,
+                );
+
+                const glassBackIntersections =
+                    glassBackRaycaster.intersectObject(ref.current, true);
+                if (glassBackIntersections.length > 0) {
+                    defaultNormal = glassBackIntersections[0].normal;
+                    glassBackPosition.copy(glassBackIntersections[0].point);
+                }
+                break;
+
             default:
                 break;
         }

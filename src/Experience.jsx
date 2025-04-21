@@ -10,6 +10,7 @@ import { useSnapshot } from 'valtio';
 import globalStateData from './globalState/globalState';
 import LoadBox from './LoadBox/LoadBox';
 import { AxesHelper } from 'three';
+import LoadCandle from './LoadCandle/LoadCandle';
 export default function Experience() {
     const dummyObject = new THREE.Object3D();
     const globalState = useSnapshot(globalStateData);
@@ -76,7 +77,8 @@ export default function Experience() {
             <LoadCameraControls ref={loadCameraControlsRef} />
             <LoadEnvironment />
             {/* <LoadTinJar cameraControls={loadCameraControlsRef} move={move} /> */}
-            <LoadBox cameraControls={loadCameraControlsRef} move={move} />
+            <LoadCandle cameraControls={loadCameraControlsRef} move={move} />
+            {/* <LoadBox cameraControls={loadCameraControlsRef} move={move} /> */}
             <axesHelper />
             <Manipulator />
         </>
