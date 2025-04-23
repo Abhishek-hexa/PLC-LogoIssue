@@ -77,13 +77,13 @@ export default function Manipulator() {
             intersect.type = 'scale';
         } else if (mesh.name.includes('rotateHelper')) {
             intersect.type = 'rotate';
-            const manipulatorPos = new THREE.Vector3().fromArray(position);
-            const mousePos = e.point;
-            const dir = new THREE.Vector3()
-                .subVectors(mousePos, manipulatorPos)
-                .normalize();
-            intersect.initialAngle = Math.atan2(dir.y, dir.x);
-            intersect.initialRotation = [...rotation];
+            // const manipulatorPos = new THREE.Vector3().fromArray(position);
+            // const mousePos = e.point;
+            // const dir = new THREE.Vector3()
+            //     .subVectors(mousePos, manipulatorPos)
+            //     .normalize();
+            // intersect.initialAngle = Math.atan2(dir.y, dir.x);
+            // intersect.initialRotation = [...rotation];
         }
         globalStateData.mouseData = intersect;
     };
@@ -102,7 +102,6 @@ export default function Manipulator() {
         if (!mouseData?.isDown) return;
 
         const point = e.point;
-        const normal = e.normal;
         if (!point) return;
 
         window.cameraControls.enabled = false;
@@ -118,9 +117,8 @@ export default function Manipulator() {
             const normal = globalState.manipulatorData.manipulatorNormal
                 ? globalState.manipulatorData.manipulatorNormal.clone()
                 : normal.clone();
-
-            const angleDiff = Utils3d.calculateRotation(normal, dir);
-
+            const angleDiff = Utils3d.calculateRotation1(normal, dir);
+            // console.log(angleDiff);
             normal.multiplyScalar(10);
             normal.add(e.point.clone());
 

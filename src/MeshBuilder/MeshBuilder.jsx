@@ -57,10 +57,7 @@ const MeshBuilder = React.forwardRef((props, ref) => {
     if (isUpdate) {
         switch (globalStateData.selectedLogoMesh) {
             case 'topoutside':
-                defaultPos = [
-                    0.007383805451391482, 0.11826410847025945,
-                    0.06023130616090583,
-                ];
+                defaultPos = [0, 0.065838, -0.05295];
                 const position = new THREE.Vector3(
                     defaultPos[0],
                     defaultPos[1],
@@ -78,12 +75,32 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                         closetPointNormal.clone(),
                         0.005,
                     );
+                const sphereGeometryTop = new THREE.SphereGeometry(
+                    0.01,
+                    16,
+                    16,
+                );
+                const sphereMaterialTop = new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                });
+                const debugSphereTop = new THREE.Mesh(
+                    sphereGeometryTop,
+                    sphereMaterialTop,
+                );
+                debugSphereTop.position.copy(upLiftedPoint);
+                scene.add(debugSphereTop);
 
+                const arrowHelperTop = new THREE.ArrowHelper(
+                    rayDirection,
+                    upLiftedPoint,
+                    0.2,
+                    0x00ff00,
+                );
+                scene.add(arrowHelperTop);
                 raycaster.set(upLiftedPoint, rayDirection);
-
                 const intersects = raycaster.intersectObject(ref.current, true);
                 if (intersects.length > 0) {
-                    defaultNormal = intersects[0].normal;
+                    defaultNormal = intersects[0].face.normal;
                     position.copy(intersects[0].point);
                 }
                 break;
@@ -110,38 +127,178 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                 );
                 break;
             case 'backoutside':
-                defaultPos = [
-                    0.01917499625852005, 0.07997076888782557,
-                    0.01033799988031382,
-                ];
-                defaultNormal = new THREE.Vector3(
-                    0.01917499625852005,
-                    0.07323132975528404,
-                    -9.991662000119685,
+                const defaultBackJarPosition = [-0.05, 0.042388, -0.041662];
+                const backOutsidePosition = new THREE.Vector3(
+                    defaultBackJarPosition[0],
+                    defaultBackJarPosition[1],
+                    defaultBackJarPosition[2],
                 );
+                const backOutsideNormal = Utils3d.calculateClosestPointNormal(
+                    ref.current,
+                    backOutsidePosition,
+                );
+                const backRayDirection = backOutsideNormal.clone().negate();
+                let adjustedBackPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        backOutsidePosition.clone(),
+                        backOutsideNormal.clone(),
+                        0.05,
+                    );
+
+                const sphereGeometry = new THREE.SphereGeometry(0.01, 16, 16);
+                const sphereMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                });
+                const debugSphere = new THREE.Mesh(
+                    sphereGeometry,
+                    sphereMaterial,
+                );
+                debugSphere.position.copy(adjustedBackPosition);
+                scene.add(debugSphere);
+
+                const arrowHelper = new THREE.ArrowHelper(
+                    backRayDirection,
+                    adjustedBackPosition,
+                    0.2,
+                    0x00ff00,
+                );
+                scene.add(arrowHelper);
+
+                const backRaycaster = new THREE.Raycaster();
+                backRaycaster.set(adjustedBackPosition, backRayDirection);
+                const backIntersections = backRaycaster.intersectObject(
+                    ref.current,
+                    true,
+                );
+                if (backIntersections.length > 0) {
+                    defaultNormal = backIntersections[0].face.normal;
+                    backOutsidePosition.copy(backIntersections[0].point);
+                }
                 break;
+
             case 'frontoutside':
-                defaultPos = [
-                    0.019984598936568083, 0.07997076888782557,
-                    0.06023130616090583,
-                ];
-                defaultNormal = new THREE.Vector3(
-                    0.019984598936568083,
-                    0.07997076888782557,
-                    10.091629068553448,
-                );
+                if (props.boxRef.current) {
+                    const defaultFrontJarPosition = [0, 0.042388, 0.041383];
+                    const frontOutsidePosition = new THREE.Vector3(
+                        defaultFrontJarPosition[0],
+                        defaultFrontJarPosition[1],
+                        defaultFrontJarPosition[2],
+                    );
+                    frontOutsidePosition.add(props.boxRef.current.position);
+                    // Add sphere at default position (before any adjustments)
+                    const defaultPositionSphereGeo = new THREE.SphereGeometry(
+                        0.01,
+                        16,
+                        16,
+                    );
+                    const defaultPositionSphereMat =
+                        new THREE.MeshBasicMaterial({
+                            color: 0x0000ff, // Blue color for default position
+                        });
+                    const defaultPositionSphere = new THREE.Mesh(
+                        defaultPositionSphereGeo,
+                        defaultPositionSphereMat,
+                    );
+                    defaultPositionSphere.position.copy(
+                        frontOutsidePosition.clone(),
+                    );
+                    scene.add(defaultPositionSphere);
+
+                    const frontOutsideNormal =
+                        Utils3d.calculateClosestPointNormal(
+                            ref.current,
+                            frontOutsidePosition,
+                        );
+                    const frontSideRayDirection = frontOutsideNormal
+                        .clone()
+                        .negate();
+                    // .add(props.boxRef.current.position);
+                    const adjustedFrontPosition =
+                        Utils3d.upLiftAPointIntheDirectionOfNormal(
+                            frontOutsidePosition.clone(),
+                            frontOutsideNormal.clone(),
+                            0.005,
+                        );
+
+                    // Red sphere at adjusted position
+                    const sphereGeometryFront = new THREE.SphereGeometry(
+                        0.01,
+                        16,
+                        16,
+                    );
+                    const sphereMaterialFront = new THREE.MeshBasicMaterial({
+                        color: 0xff0000,
+                    });
+                    const debugSphereFront = new THREE.Mesh(
+                        sphereGeometryFront,
+                        sphereMaterialFront,
+                    );
+                    debugSphereFront.position.copy(
+                        adjustedFrontPosition.clone(),
+                    );
+                    scene.add(debugSphereFront);
+
+                    // Green arrow showing ray direction
+                    const arrowHelperFront = new THREE.ArrowHelper(
+                        frontSideRayDirection,
+                        adjustedFrontPosition.clone(),
+                        0.2,
+                        0x00ff00,
+                    );
+                    scene.add(arrowHelperFront);
+
+                    const frontRaycaster = new THREE.Raycaster();
+                    frontRaycaster.set(
+                        adjustedFrontPosition,
+                        frontSideRayDirection,
+                    );
+                    const frontIntersections = frontRaycaster.intersectObject(
+                        ref.current,
+                        true,
+                    );
+                    debugger;
+                    if (frontIntersections.length > 0) {
+                        defaultNormal = frontIntersections[0].face.normal;
+                        frontOutsidePosition.copy(frontIntersections[0].point);
+                    }
+                }
+
                 break;
             case 'Jar':
                 defaultPos = [
                     0.01734962116276329, 0.05332992313939302,
                     0.08324896520546525,
                 ];
-                defaultNormal = new THREE.Vector3(
-                    -0.8273229034761411,
-                    -0.03662904975732841,
-                    10.03935150661017,
+                const jarPosition = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
                 );
+                const jarNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    jarPosition,
+                );
+                const frontRayDirection = jarNormal.clone().negate();
+                const jarLiftedPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        jarPosition.clone(),
+                        jarNormal.clone(),
+                        0.005,
+                    );
+                const jarRaycaster = new THREE.Raycaster();
+                jarRaycaster.set(jarLiftedPosition, frontRayDirection);
+                console.log(ref.current);
+                const jarIntersections = jarRaycaster.intersectObject(
+                    ref.current,
+                    true,
+                );
+                if (jarIntersections.length > 0) {
+                    defaultNormal = jarIntersections[0].face.normal;
+                    console.log(defaultNormal);
+                    jarPosition.copy(jarIntersections[0].point);
+                }
                 break;
+
             case 'Lid_Side':
                 defaultPos = [
                     0.05421435158634437, 0.06719581148090548,
@@ -164,7 +321,7 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     defaultPos[2],
                 );
                 const glassFrontNormal = Utils3d.calculateClosestPointNormal(
-                    globalStateData.currentMeshObject,
+                    ref.current,
                     glassFrontPosition,
                 );
 
@@ -187,7 +344,7 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                 const glassFrontIntersections =
                     glassFrontRaycaster.intersectObject(ref.current, true);
                 if (glassFrontIntersections.length > 0) {
-                    defaultNormal = glassFrontIntersections[0].normal;
+                    defaultNormal = glassFrontIntersections[0].face.normal;
                     glassFrontPosition.copy(glassFrontIntersections[0].point);
                 }
                 break;
@@ -205,6 +362,7 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     globalStateData.currentMeshObject,
                     glassBackPosition,
                 );
+
                 const glassBackRayDirection = glassBackNormal.clone().negate();
                 const glassBackLiftedPosition =
                     Utils3d.upLiftAPointIntheDirectionOfNormal(
@@ -222,11 +380,80 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                 const glassBackIntersections =
                     glassBackRaycaster.intersectObject(ref.current, true);
                 if (glassBackIntersections.length > 0) {
-                    defaultNormal = glassBackIntersections[0].normal;
+                    defaultNormal = glassBackIntersections[0].face.normal;
                     glassBackPosition.copy(glassBackIntersections[0].point);
                 }
                 break;
+            case 'topside':
+                defaultPos = [0, 0.1099, 0.001283];
+                const topsidePosition = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
+                );
+                const topsideNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    topsidePosition,
+                );
+                const topsideRayDirection = topsideNormal.clone().negate();
+                const topsideLiftedPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        topsidePosition.clone(),
+                        topsideNormal.clone(),
+                        0.005,
+                    );
+                const topsideRaycaster = new THREE.Raycaster();
 
+                topsideRaycaster.set(
+                    topsideLiftedPosition,
+                    topsideRayDirection,
+                );
+                const topsideIntersections = topsideRaycaster.intersectObject(
+                    ref.current,
+                    true,
+                );
+                if (topsideIntersections.length > 0) {
+                    defaultNormal = topsideIntersections[0].face.normal;
+                    topsidePosition.copy(topsideIntersections[0].point);
+                }
+                break;
+            case 'topfrontside':
+                defaultPos = [0, 0.065838, 0.055515];
+                const topfrontsidePosition = new THREE.Vector3(
+                    defaultPos[0],
+                    defaultPos[1],
+                    defaultPos[2],
+                );
+                const topfrontsideNormal = Utils3d.calculateClosestPointNormal(
+                    globalStateData.currentMeshObject,
+                    topfrontsidePosition,
+                );
+                const topfrontsideRayDirection = topfrontsideNormal
+                    .clone()
+                    .negate();
+                const topfrontsideLiftedPosition =
+                    Utils3d.upLiftAPointIntheDirectionOfNormal(
+                        topfrontsidePosition.clone(),
+                        topfrontsideNormal.clone(),
+                        0.005,
+                    );
+                const topfrontsideRaycaster = new THREE.Raycaster();
+
+                topfrontsideRaycaster.set(
+                    topfrontsideLiftedPosition,
+                    topfrontsideRayDirection,
+                );
+
+                const topfrontsideIntersections =
+                    topfrontsideRaycaster.intersectObject(ref.current, true);
+                if (topfrontsideIntersections.length > 0) {
+                    defaultNormal = topfrontsideIntersections[0].face.normal;
+                    topfrontsidePosition.copy(
+                        topfrontsideIntersections[0].point,
+                    );
+                }
+                break;
+            case ''
             default:
                 break;
         }

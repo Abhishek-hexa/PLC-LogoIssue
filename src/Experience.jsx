@@ -11,6 +11,7 @@ import globalStateData from './globalState/globalState';
 import LoadBox from './LoadBox/LoadBox';
 import { AxesHelper } from 'three';
 import LoadCandle from './LoadCandle/LoadCandle';
+import LoadSimpleBox from './LoadBox/LoadSimpleBox';
 export default function Experience() {
     const dummyObject = new THREE.Object3D();
     const globalState = useSnapshot(globalStateData);
@@ -36,7 +37,7 @@ export default function Experience() {
         switch (mouseData.type) {
             case 'move':
                 let angleDiff = globalStateData.manipulatorData.angleDiff;
-                let normal = e.normal;
+                let normal = e.face.normal;
                 const n = normal.clone();
 
                 let angleToRotate = angleDiff;
@@ -77,8 +78,9 @@ export default function Experience() {
             <LoadCameraControls ref={loadCameraControlsRef} />
             <LoadEnvironment />
             {/* <LoadTinJar cameraControls={loadCameraControlsRef} move={move} /> */}
-            <LoadCandle cameraControls={loadCameraControlsRef} move={move} />
+            {/* <LoadCandle cameraControls={loadCameraControlsRef} move={move} /> */}
             {/* <LoadBox cameraControls={loadCameraControlsRef} move={move} /> */}
+            <LoadSimpleBox cameraControls={loadCameraControlsRef} move={move} />
             <axesHelper />
             <Manipulator />
         </>

@@ -44,7 +44,7 @@ const LoadBox = (props) => {
     }, [globalStateData.selectedLogoMesh]);
 
     return (
-        <group ref={objectRef} position={[0.02, 0.03, 0.05]}>
+        <group ref={objectRef} position={[-0.05, 0, 0]}>
             <MeshBuilder
                 mesh={nodes.backoutside}
                 move={props.move}
@@ -55,6 +55,8 @@ const LoadBox = (props) => {
                 mesh={nodes.frontoutside}
                 move={props.move}
                 ref={frontOutSideRef}
+                visible={false}
+                boxRef={objectRef}
             />
             <MeshBuilder mesh={nodes.leftfoldoutside} move={props.move} />
             <MeshBuilder
