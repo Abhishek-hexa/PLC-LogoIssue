@@ -419,13 +419,27 @@ export class Utils3d {
                     ? finalRotation + Math.PI
                     : finalRotation;
         } else if (dominantAxis.isYAxis) {
-            rotationAngle = Math.atan2(mouseDirection.x, mouseDirection.z);
-            directionSign = Math.sign(normalizedNormal.y);
-            rotationAngle *= directionSign;
-            if (normalizedNormal.z > 0) {
-                finalRotation = rotationAngle - Math.PI / 2;
+            const isPlaneNormalized =
+                Math.abs(planeNormal.x) == 0 && Math.abs(planeNormal.z) == 0;
+
+            if (isPlaneNormalized) {
+                rotationAngle = Math.atan2(mouseDirection.x, mouseDirection.z);
+                directionSign = Math.sign(normalizedNormal.y);
+                rotationAngle *= directionSign;
+                finalRotation = rotationAngle;
+                finalRotation =
+                    normalizedNormal.y < 0
+                        ? finalRotation + Math.PI / 2
+                        : finalRotation + Math.PI * 1.5; // adding 1.5pi to the rotation angle to account for the fact that the plane is now inverted
             } else {
-                finalRotation = rotationAngle + Math.PI / 2;
+                rotationAngle = Math.atan2(mouseDirection.x, mouseDirection.z);
+                directionSign = Math.sign(normalizedNormal.y);
+                rotationAngle *= directionSign;
+                if (normalizedNormal.z > 0) {
+                    finalRotation = rotationAngle - Math.PI / 2;
+                } else {
+                    finalRotation = rotationAngle + Math.PI / 2;
+                }
             }
         } else {
             console.warn(
