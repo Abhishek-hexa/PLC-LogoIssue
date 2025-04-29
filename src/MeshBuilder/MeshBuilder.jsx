@@ -256,7 +256,6 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                         ref.current,
                         true,
                     );
-                    debugger;
                     if (frontIntersections.length > 0) {
                         defaultNormal = frontIntersections[0].face.normal;
                         frontOutsidePosition.copy(frontIntersections[0].point);
@@ -287,14 +286,12 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     );
                 const jarRaycaster = new THREE.Raycaster();
                 jarRaycaster.set(jarLiftedPosition, frontRayDirection);
-                console.log(ref.current);
                 const jarIntersections = jarRaycaster.intersectObject(
                     ref.current,
                     true,
                 );
                 if (jarIntersections.length > 0) {
                     defaultNormal = jarIntersections[0].face.normal;
-                    console.log(defaultNormal);
                     jarPosition.copy(jarIntersections[0].point);
                 }
                 break;
@@ -453,7 +450,10 @@ const MeshBuilder = React.forwardRef((props, ref) => {
                     );
                 }
                 break;
-            case ''
+            case 'Lid_Top':
+                defaultPos = [0, 0.065838, 0.055515];
+                defaultNormal = new THREE.Vector3(0, 0, 1);
+                break;
             default:
                 break;
         }
